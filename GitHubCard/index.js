@@ -1,3 +1,4 @@
+import axios from 'axios';
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
@@ -28,8 +29,16 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+function getUserData(username){
+  axios.get(`https://api.github.com/users/${username}`).then(resp => {
+    document.querySelector('.cards').appendChild(createUserCard(resp.data));
+  }).catch(error => {
+    console.error(error);
+  })
+}
 
+const followersArray = ['tetondan','dustinmyers','justsml','luishrd','bigknell', 'eduarddoescobar'];
+followersArray.forEach(follower => getUserData(follower));
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
     Using DOM methods and properties, create and return the following markup:
@@ -49,6 +58,54 @@ const followersArray = [];
       </div>
     </div>
 */
+function createUserCard(obj){
+  //Create all the elements needed
+  const cardDiv = document.createElement('div');
+  const userImg = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const name = document.createElement('h3');
+  const username = document.createElement('p');
+  const location = document.createElement('p');
+  const profile = document.createElement('p');
+  const githubAddress = document.createElement('a');
+  const followers = document.createElement('p');
+  const following = document.createElement('p');
+  const bio = document.createElement('p');
+
+  //Sets the hierarchy for the elements
+  cardDiv.appendChild(userImg);
+  cardDiv.appendChild(cardInfo);
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+
+  //Sets the classes for all the elements
+  cardDiv.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+  //Sets the content for all the elements
+  userImg.src = obj['avatar_url'];
+  name.textContent = obj['name'];
+  username.textContent = obj['login'];
+  location.textContent = `Location: ${obj['location']}`;
+  githubAddress.textContent = obj['html_url'];
+  githubAddress.href = obj['html_url'];
+  profile.textContent = `Profile: `;
+  followers.textContent = `Followers: ${obj['followers']}`;
+  following.textContent = `Following: ${obj['following']}`;
+  bio.textContent = `Bio: ${obj['bio']}`;
+
+  
+  profile.appendChild(githubAddress);
+
+  return cardDiv;
+}
 
 /*
   List of LS Instructors Github username's:
@@ -58,3 +115,4 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
